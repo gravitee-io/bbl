@@ -76,24 +76,11 @@ public class Main {
             );
         });
 
-//        Route post = router.route().method(HttpMethod.POST);
-//        post.handler(routingContext -> {
-//            HttpServerRequest request = routingContext.request();
-//            HttpServerResponse response = routingContext.response();
-//
-//            int statusCode = request.getParam("statusCode") == null
-//                    ? 200
-//                    : Integer.valueOf(request.getParam("statusCode"));
-//
-//            response.setStatusCode(statusCode);
-//
-//            request.headers().entries().stream()
-//                    .filter( entry -> !"host".equalsIgnoreCase(entry.getKey()) )
-//                    .forEach( entry -> response.putHeader(entry.getKey(), entry.getValue()) );
-//
-//            request.handler(response::write);
-//            request.endHandler(aVoid -> response.end());
-//        });
+        Route post = router.route().method(HttpMethod.POST);
+        post.handler(routingContext ->
+                routingContext.response().
+                        setStatusCode(201).
+                        end());
 
         int port = 8080;
         if (args.length > 0) {
