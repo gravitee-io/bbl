@@ -36,43 +36,68 @@ public class Main {
         HttpServer server = vertx.createHttpServer();
         Router router = Router.router(vertx);
 
-        Route get = router.route().method(HttpMethod.GET).produces("application/json");
-        get.handler(routingContext -> {
-            JsonArray content = new JsonArray(
-                    "[\n" +
-                            "  {\n" +
-                            "    \"nom\": \"AXA Assurance Lille\",\n" +
-                            "    \"conseiller\": \"Pascal Coue\",\n" +
-                            "    \"metier\": \"Agent Général d'assurance AXA France\",\n" +
-                            "    \"adresse\": \"124b Rue Faubourg De Roubaix 59000 Lille\"\n" +
-                            "  },\n" +
-                            "  {\n" +
-                            "    \"nom\": \"AXA Assurance Lille\",\n" +
-                            "    \"conseiller\": \"Patricia Mariez\",\n" +
-                            "    \"metier\": \"Agent Mandataire AXA Epargne et Protection\",\n" +
-                            "    \"adresse\": \"124b Rue Faubourg De Roubaix 59000 Lille\"\n" +
-                            "  },\n" +
-                            "  {\n" +
-                            "    \"nom\": \"AXA Assurance Lille\",\n" +
-                            "    \"conseiller\": \"Costa Et Leclercq\",\n" +
-                            "    \"metier\": \"Agents Généraux d'assurance AXA France\",\n" +
-                            "    \"adresse\": \"89 Bd De La Liberte 59000 Lille\"\n" +
-                            "  },\n" +
-                            "  {\n" +
-                            "    \"nom\": \"AXA Assurance Lille\",\n" +
-                            "    \"conseiller\": \"Bruno Acloque\",\n" +
-                            "    \"metier\": \"Agent Général d'assurance AXA France\",\n" +
-                            "    \"adresse\": \"53 Boulevard Carnot 59800 Lille\"\n" +
-                            "  }\n" +
-                            "]"
-            );
+        JsonArray agencies =  new JsonArray();
+        agencies.add( new JsonObject(
+                "{" +
+                        "\"nom\": \"AXA Assurance Lille\"," +
+                        "\"conseiller\": \"Pascal Coue\"," +
+                        "\"metier\": \"Agent Général d'assurance AXA France\"," +
+                        "\"adresse\": \"124b Rue Faubourg De Roubaix 59000 Lille\"" +
+                        "}"
+        ));
+        agencies.add( new JsonObject(
+                "{" +
+                        "\"nom\": \"AXA Assurance Lille\"," +
+                        "\"conseiller\": \"Patricia Mariez\"," +
+                        "\"metier\": \"Agent Mandataire AXA Epargne et Protection\"," +
+                        "\"adresse\": \"124b Rue Faubourg De Roubaix 59000 Lille\"" +
+                        "}"
+        ));
+        agencies.add( new JsonObject(
+                "{" +
+                        "\"nom\": \"AXA Assurance Lille\"," +
+                        "\"conseiller\": \"Costa Et Leclercq\"," +
+                        "\"metier\": \"Agents Généraux d'assurance AXA France\"," +
+                        "\"adresse\": \"89 Bd De La Liberte 59000 Lille\"" +
+                        "}"
+        ));
+        agencies.add( new JsonObject(
+                "{" +
+                        "\"nom\": \"AXA Assurance Lille\"," +
+                        "\"conseiller\": \"Bruno Acloque\"," +
+                        "\"metier\": \"Agent Général d'assurance AXA France\"," +
+                        "\"adresse\": \"53 Boulevard Carnot 59800 Lille\"" +
+                        "}"
+        ));
 
+        int port = 8080;
+        int agencyId =-1;
+        if (args.length > 0) {
+            try{
+                port = Integer.parseInt(args[0]);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (port != 8080) {
+            agencyId = port % agencies.size();
+        }
+
+        Route get = router.route().method(HttpMethod.GET).produces("application/json");
+        final int finalagencyid = agencyId;
+        final int latency = finalagencyid == -1 ? 500 : 1;
+
+        get.handler(routingContext -> {
             vertx.setTimer(
-                    500,
+                    latency,
                     id -> routingContext.response().
                             putHeader("content-type", "application/json").
                             setStatusCode(200).
-                            end(content.encodePrettily())
+                            end( finalagencyid == -1 ?
+                                    agencies.encodePrettily():
+                                    agencies.getJsonObject(finalagencyid).encodePrettily()
+                            )
             );
         });
 
@@ -82,14 +107,7 @@ public class Main {
                         setStatusCode(201).
                         end());
 
-        int port = 8080;
-        if (args.length > 0) {
-            try{
-                port = Integer.parseInt(args[0]);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+
         server.requestHandler(router::accept).listen(port);
         System.out.println("Server listening on port " + port);
     }

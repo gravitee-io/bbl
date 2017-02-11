@@ -19,7 +19,8 @@ MAINTAINER Gravitee Team <http://gravitee.io>
 
 COPY target/gravitee-bbl-multiagency-*.jar /opt
 
+ENV PORT 8080
 WORKDIR /opt
 RUN ln -sf gravitee-*.jar gravitee-api.jar
-EXPOSE 8080
-CMD ["java", "-jar", "gravitee-api.jar"]
+EXPOSE ${PORT}
+ENTRYPOINT ["java", "-jar", "gravitee-api.jar"]

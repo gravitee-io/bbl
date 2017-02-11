@@ -15,5 +15,7 @@
 # limitations under the License.
 #
 
+EXPOSED_PORT="808$1"
+HOST_PORT="910$1"
 
-docker run --rm -p "9101:8080" graviteeio/bbl-multiagency
+docker run --rm -p "$HOST_PORT:$EXPOSED_PORT" graviteeio/bbl-multiagency $EXPOSED_PORT
