@@ -1,0 +1,133 @@
+{
+  "name": "Multi Agences with dynamic routing",
+  "version": "v2",
+  "description": "L'API Multi Agences permet de récupérer la liste des agences",
+  "visibility": "PUBLIC",
+  "tags": [],
+  "proxy": {
+    "context_path": "/agencies/v2",
+    "strip_context_path": false,
+    "dumpRequest": false,
+    "endpoints": [
+      {
+        "name": "agence1",
+        "target": "http://172.17.0.1:9101",
+        "weight": 1,
+        "backup": false,
+        "healthcheck": true,
+        "http": {
+          "connectTimeout": 5000,
+          "idleTimeout": 60000,
+          "keepAlive": true,
+          "readTimeout": 10000,
+          "pipelining": false,
+          "maxConcurrentConnections": 100,
+          "useCompression": true
+        }
+      },
+      {
+        "name": "agence2",
+        "target": "http://172.17.0.1:9102",
+        "weight": 1,
+        "backup": false,
+        "healthcheck": true,
+        "http": {
+          "connectTimeout": 5000,
+          "idleTimeout": 60000,
+          "keepAlive": true,
+          "readTimeout": 10000,
+          "pipelining": false,
+          "maxConcurrentConnections": 100,
+          "useCompression": true
+        }
+      }
+    ],
+    "load_balancing": {
+      "type": "RANDOM"
+    }
+  },
+  "paths": {
+    "/": [
+      {
+        "methods": [
+          "GET",
+          "POST",
+          "PUT",
+          "DELETE",
+          "HEAD",
+          "PATCH",
+          "OPTIONS",
+          "TRACE",
+          "CONNECT"
+        ],
+        "dynamic-routing": {
+          "rules": [
+            {
+              "pattern": "/(.*)",
+              "url": "{#endpoints['agence'+#group[0]]}"
+            }
+          ]
+        },
+        "description": "Description of the Dynamic Routing Gravitee Policy",
+        "enabled": true
+      }
+    ]
+  },
+  "properties": {},
+  "services": {},
+  "resources": [],
+  "members": [
+    {
+      "username": "admin",
+      "type": "PRIMARY_OWNER"
+    }
+  ],
+  "pages": [],
+  "plans": [
+    {
+      "id": "64033bb8-201b-4635-833b-b8201b963585",
+      "name": "Free",
+      "description": "Open API",
+      "validation": "AUTO",
+      "security": "API_KEY",
+      "type": "API",
+      "status": "PUBLISHED",
+      "apis": [
+        "4d6604c5-24c4-4eb5-a604-c524c49eb5ee"
+      ],
+      "order": 0,
+      "characteristics": [],
+      "created_at": 1486852930971,
+      "updated_at": 1486853364260,
+      "published_at": 1486853070870,
+      "paths": {
+        "/": [
+          {
+            "methods": [
+              "GET",
+              "POST",
+              "PUT",
+              "DELETE",
+              "HEAD",
+              "PATCH",
+              "OPTIONS",
+              "TRACE",
+              "CONNECT"
+            ],
+            "resource-filtering": {
+              "whitelist": [
+                {
+                  "pattern": "/**",
+                  "methods": [
+                    "GET"
+                  ]
+                }
+              ]
+            },
+            "enabled": true
+          }
+        ]
+      }
+    }
+  ]
+}

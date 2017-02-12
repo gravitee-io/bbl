@@ -1,0 +1,170 @@
+{
+  "name": "Multi Agences",
+  "version": "v1",
+  "description": "L'API Multi Agences permet de récupérer la liste des agences",
+  "visibility": "PRIVATE",
+  "tags": [],
+  "proxy": {
+    "context_path": "/agencies/v1",
+    "strip_context_path": false,
+    "dumpRequest": false,
+    "endpoints": [
+      {
+        "name": "default",
+        "target": "http://172.17.0.1:9100",
+        "weight": 1,
+        "backup": false,
+        "healthcheck": true,
+        "http": {
+          "connectTimeout": 5000,
+          "idleTimeout": 60000,
+          "keepAlive": true,
+          "readTimeout": 10000,
+          "pipelining": false,
+          "maxConcurrentConnections": 100,
+          "useCompression": true
+        }
+      }
+    ],
+    "load_balancing": {
+      "type": "ROUND_ROBIN"
+    }
+  },
+  "paths": {
+    "/": [
+      {
+        "methods": [
+          "GET",
+          "POST",
+          "PUT",
+          "DELETE",
+          "HEAD",
+          "PATCH",
+          "OPTIONS",
+          "TRACE",
+          "CONNECT"
+        ],
+        "cache": {
+          "timeToLiveSeconds": 600,
+          "useResponseCacheHeaders": false,
+          "scope": "APPLICATION",
+          "cacheName": "Cache des agences",
+          "key": "agencies"
+        },
+        "description": "Description of the Cache Gravitee Policy",
+        "enabled": true
+      }
+    ]
+  },
+  "services": {},
+  "resources": [
+    {
+      "name": "Cache des agences",
+      "type": "cache",
+      "enabled": true,
+      "configuration": {
+        "name": "my-cache",
+        "timeToIdleSeconds": 1000,
+        "timeToLiveSeconds": 1000,
+        "maxEntriesLocalHeap": 1000
+      }
+    }
+  ],
+  "members": [
+    {
+      "username": "admin",
+      "type": "PRIMARY_OWNER"
+    }
+  ],
+  "pages": [],
+  "plans": [
+    {
+      "id": "4e426c8c-eeed-4a45-826c-8ceeed7a45a7",
+      "name": "Free",
+      "description": "Open API",
+      "validation": "AUTO",
+      "security": "API_KEY",
+      "type": "API",
+      "status": "PUBLISHED",
+      "apis": [
+        "82d82279-a647-4beb-9822-79a647fbebae"
+      ],
+      "order": 0,
+      "characteristics": [],
+      "created_at": 1486838724505,
+      "updated_at": 1486844680645,
+      "published_at": 1486838736625,
+      "paths": {
+        "/": [
+          {
+            "methods": [
+              "GET",
+              "POST",
+              "PUT",
+              "DELETE",
+              "HEAD",
+              "PATCH",
+              "OPTIONS",
+              "TRACE",
+              "CONNECT"
+            ],
+            "resource-filtering": {
+              "whitelist": [
+                {
+                  "pattern": "/**",
+                  "methods": [
+                    "GET"
+                  ]
+                }
+              ]
+            },
+            "enabled": true
+          },
+          {
+            "methods": [
+              "GET",
+              "POST",
+              "PUT",
+              "DELETE",
+              "HEAD",
+              "PATCH",
+              "OPTIONS",
+              "TRACE",
+              "CONNECT"
+            ],
+            "rate-limit": {
+              "rate": {
+                "limit": 2,
+                "periodTime": 1,
+                "periodTimeUnit": "SECONDS"
+              }
+            },
+            "enabled": true
+          },
+          {
+            "methods": [
+              "GET",
+              "POST",
+              "PUT",
+              "DELETE",
+              "HEAD",
+              "PATCH",
+              "OPTIONS",
+              "TRACE",
+              "CONNECT"
+            ],
+            "quota": {
+              "quota": {
+                "limit": 1000,
+                "periodTime": 1,
+                "periodTimeUnit": "DAYS"
+              },
+              "addHeaders": true
+            },
+            "enabled": true
+          }
+        ]
+      }
+    }
+  ]
+}

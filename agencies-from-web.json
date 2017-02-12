@@ -1,0 +1,204 @@
+{
+  "name": "Multi Agences from Web",
+  "version": "1",
+  "description": "Multi Agences from Web",
+  "visibility": "PUBLIC",
+  "tags": [],
+  "proxy": {
+    "context_path": "/agencies/v3",
+    "strip_context_path": false,
+    "dumpRequest": true,
+    "endpoints": [
+      {
+        "name": "default",
+        "target": "https://agences.axa.fr/nord-pas-de-calais/nord/lille-59000",
+        "weight": 1,
+        "backup": false,
+        "healthcheck": true,
+        "http": {
+          "connectTimeout": 5000,
+          "idleTimeout": 60000,
+          "keepAlive": true,
+          "readTimeout": 10000,
+          "pipelining": false,
+          "maxConcurrentConnections": 100,
+          "useCompression": true
+        }
+      }
+    ],
+    "load_balancing": {
+      "type": "ROUND_ROBIN"
+    }
+  },
+  "paths": {
+    "/": [
+      {
+        "methods": [
+          "GET",
+          "POST",
+          "PUT",
+          "DELETE",
+          "HEAD",
+          "PATCH",
+          "OPTIONS",
+          "TRACE",
+          "CONNECT"
+        ],
+        "cache": {
+          "timeToLiveSeconds": 600,
+          "useResponseCacheHeaders": false,
+          "scope": "APPLICATION",
+          "cacheName": "cache",
+          "key": "web"
+        },
+        "description": "Description of the Cache Gravitee Policy",
+        "enabled": true
+      },
+      {
+        "methods": [
+          "GET",
+          "POST",
+          "PUT",
+          "DELETE",
+          "HEAD",
+          "PATCH",
+          "OPTIONS",
+          "TRACE",
+          "CONNECT"
+        ],
+        "dynamic-routing": {
+          "rules": [
+            {
+              "pattern": "/(.*)",
+              "url": "https://agences.axa.fr/nord-pas-de-calais/nord/{#properties[#group[0]]}"
+            }
+          ]
+        },
+        "description": "Description of the Dynamic Routing Gravitee Policy",
+        "enabled": true
+      },
+      {
+        "methods": [
+          "GET",
+          "POST",
+          "PUT",
+          "DELETE",
+          "HEAD",
+          "PATCH",
+          "OPTIONS",
+          "TRACE",
+          "CONNECT"
+        ],
+        "html-json": {
+          "selectors": [
+            {
+              "array": true,
+              "jsonName": "nom",
+              "selector": ".ConseillerVille"
+            },
+            {
+              "array": true,
+              "selector": ".BaselineInfo",
+              "jsonName": "metier"
+            },
+            {
+              "array": true,
+              "jsonName": "conseiller",
+              "selector": ".Name"
+            },
+            {
+              "array": true,
+              "jsonName": "adresse",
+              "selector": ".street-address"
+            }
+          ]
+        },
+        "description": "The HTML to JSON Transformation Gravitee Policy allows to get a json by parsing an html content",
+        "enabled": true
+      },
+      {
+        "methods": [
+          "GET",
+          "POST",
+          "PUT",
+          "DELETE",
+          "HEAD",
+          "PATCH",
+          "OPTIONS",
+          "TRACE",
+          "CONNECT"
+        ],
+        "logging": {},
+        "description": "Description of the Logging Gravitee Policy",
+        "enabled": true
+      },
+      {
+        "methods": [
+          "GET",
+          "POST",
+          "PUT",
+          "DELETE",
+          "HEAD",
+          "PATCH",
+          "OPTIONS",
+          "TRACE",
+          "CONNECT"
+        ],
+        "json-to-json": {
+          "scope": "RESPONSE",
+          "specification": "[\n  {\n    \"operation\": \"shift\",\n    \"spec\": {\n      \"*\": {\n        \"*\": {\n          \"@\": \"[#2].&2\"\n        }\n      }\n    }\n  }\n]"
+        },
+        "description": "Description of the JSON to JSON Transformation Gravitee Policy",
+        "enabled": true
+      }
+    ]
+  },
+  "properties": {
+    "17300": "rochefort-17300",
+    "59000": "lille-59000",
+    "59200": "tourcoing-59200"
+  },
+  "services": {},
+  "resources": [
+    {
+      "name": "cache",
+      "type": "cache",
+      "enabled": true,
+      "configuration": {
+        "name": "my-cache",
+        "timeToIdleSeconds": 10000,
+        "timeToLiveSeconds": 10000,
+        "maxEntriesLocalHeap": 1000
+      }
+    }
+  ],
+  "members": [
+    {
+      "username": "admin",
+      "type": "PRIMARY_OWNER"
+    }
+  ],
+  "pages": [],
+  "plans": [
+    {
+      "id": "a00ff019-713f-4e5d-8ff0-19713f6e5da9",
+      "name": "Free",
+      "description": "free",
+      "validation": "AUTO",
+      "security": "API_KEY",
+      "type": "API",
+      "status": "PUBLISHED",
+      "apis": [
+        "c709ca38-b9d7-4e30-89ca-38b9d78e301c"
+      ],
+      "order": 0,
+      "characteristics": [],
+      "created_at": 1486903307022,
+      "updated_at": 1486903369198,
+      "published_at": 1486903312986,
+      "paths": {
+        "/": []
+      }
+    }
+  ]
+}
