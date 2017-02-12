@@ -1,0 +1,14 @@
+1 . launch gravitee
+```
+$ docker-compose up
+```
+
+2 . import apis
+
+
+3 . build and launch sample apis
+```
+$ ./build.sh
+$ ./run.sh 0 &
+$ ./run.sh 1 &
+$ ./run.sh 2 &
