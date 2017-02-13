@@ -1,0 +1,191 @@
+{
+  "name": "WS sample",
+  "version": "v1",
+  "description": "how to call https://github.com/spring-guides/gs-producing-web-service",
+  "visibility": "PUBLIC",
+  "tags": [],
+  "proxy": {
+    "context_path": "/capital",
+    "strip_context_path": false,
+    "dumpRequest": false,
+    "endpoints": [
+      {
+        "name": "default",
+        "target": "http://172.17.0.1:8080/ws",
+        "weight": 1,
+        "backup": false,
+        "healthcheck": true,
+        "http": {
+          "connectTimeout": 5000,
+          "idleTimeout": 60000,
+          "keepAlive": true,
+          "readTimeout": 10000,
+          "pipelining": false,
+          "maxConcurrentConnections": 100,
+          "useCompression": true
+        }
+      }
+    ],
+    "load_balancing": {
+      "type": "ROUND_ROBIN"
+    }
+  },
+  "paths": {
+    "/": [
+      {
+        "methods": [
+          "GET",
+          "POST",
+          "PUT",
+          "DELETE",
+          "HEAD",
+          "PATCH",
+          "OPTIONS",
+          "TRACE",
+          "CONNECT"
+        ],
+        "rest-to-soap": {
+          "envelope": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"\n\t\t\t\t  xmlns:gs=\"http://spring.io/guides/gs-producing-web-service\">\n   <soapenv:Header/>\n   <soapenv:Body>\n      <gs:getCountryRequest>\n         <gs:name>{#request.paths[2]}</gs:name>\n      </gs:getCountryRequest>\n   </soapenv:Body>\n</soapenv:Envelope>"
+        },
+        "description": "Description of the Rest to SOAP Transformer Policy",
+        "enabled": true
+      },
+      {
+        "methods": [
+          "GET",
+          "POST",
+          "PUT",
+          "DELETE",
+          "HEAD",
+          "PATCH",
+          "OPTIONS",
+          "TRACE",
+          "CONNECT"
+        ],
+        "logging": {},
+        "description": "Description of the Logging Gravitee Policy",
+        "enabled": true
+      },
+      {
+        "methods": [
+          "GET",
+          "POST",
+          "PUT",
+          "DELETE",
+          "HEAD",
+          "PATCH",
+          "OPTIONS",
+          "TRACE",
+          "CONNECT"
+        ],
+        "xslt": {
+          "scope": "RESPONSE",
+          "parameters": [],
+          "stylesheet": "\n\n<xsl:stylesheet version=\"2.0\"\n    xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\"\n    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n    xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"\n    xmlns:fn=\"http://www.w3.org/2005/xpath-functions\"\n    exclude-result-prefixes=\"fn xsl\">\n\n    <xsl:output method=\"xml\" version=\"1.0\" encoding=\"UTF-8\" indent=\"yes\" />\n\n    <!-- template to copy elements -->\n    <xsl:template match=\"*\">\n        <xsl:if test=\"normalize-space(string(.)) != ''\">\n            <xsl:element name=\"{local-name()}\">\n                <xsl:apply-templates select=\"@* | node()\"/>\n            </xsl:element>\n        </xsl:if>\n    </xsl:template>\n\n    <!-- template to copy attributes -->\n    <xsl:template match=\"@*\">\n        <xsl:attribute name=\"{local-name()}\">\n            <xsl:value-of select=\".\"/>\n        </xsl:attribute>\n    </xsl:template>\n\n    <!-- template to copy the rest of the nodes -->\n    <xsl:template match=\"comment() | text() | processing-instruction()\">\n        <xsl:copy/>\n    </xsl:template>\n\n    <xsl:template match=\"soapenv:*\">\n        <xsl:apply-templates select=\"@* | node()\" />\n    </xsl:template>\n  \n    <xsl:template match=\"@xsi:nil[.='true']\"/>\n</xsl:stylesheet>\n\n"
+        },
+        "description": "Description of the XSLT Gravitee Policy",
+        "enabled": true
+      },
+      {
+        "methods": [
+          "GET",
+          "POST",
+          "PUT",
+          "DELETE",
+          "HEAD",
+          "PATCH",
+          "OPTIONS",
+          "TRACE",
+          "CONNECT"
+        ],
+        "logging": {},
+        "description": "Description of the Logging Gravitee Policy",
+        "enabled": true
+      },
+      {
+        "methods": [
+          "GET",
+          "POST",
+          "PUT",
+          "DELETE",
+          "HEAD",
+          "PATCH",
+          "OPTIONS",
+          "TRACE",
+          "CONNECT"
+        ],
+        "xml-json": {
+          "scope": "RESPONSE"
+        },
+        "description": "Description of the XML to JSON Transformation  Gravitee Policy",
+        "enabled": true
+      },
+      {
+        "methods": [
+          "GET",
+          "POST",
+          "PUT",
+          "DELETE",
+          "HEAD",
+          "PATCH",
+          "OPTIONS",
+          "TRACE",
+          "CONNECT"
+        ],
+        "logging": {},
+        "description": "Description of the Logging Gravitee Policy",
+        "enabled": true
+      },
+      {
+        "methods": [
+          "GET",
+          "POST",
+          "PUT",
+          "DELETE",
+          "HEAD",
+          "PATCH",
+          "OPTIONS",
+          "TRACE",
+          "CONNECT"
+        ],
+        "json-to-json": {
+          "scope": "RESPONSE",
+          "specification": "[\n  {\n    \"operation\": \"shift\",\n    \"spec\": {\n      \"getCountryResponse\": {\n        \"country\": {\n          \"*\": {\n            \"@\": \"&\"\n          }\n        }\n      }\n    }\n  }\n]"
+        },
+        "description": "Description of the JSON to JSON Transformation Gravitee Policy",
+        "enabled": true
+      }
+    ]
+  },
+  "services": {},
+  "resources": [],
+  "members": [
+    {
+      "username": "admin",
+      "type": "PRIMARY_OWNER"
+    }
+  ],
+  "pages": [],
+  "plans": [
+    {
+      "id": "02944b64-0fe8-44c0-944b-640fe894c0ba",
+      "name": "Free",
+      "description": "Free plan",
+      "validation": "AUTO",
+      "security": "API_KEY",
+      "type": "API",
+      "status": "PUBLISHED",
+      "apis": [
+        "44e46238-398c-49e7-a462-38398c49e794"
+      ],
+      "order": 0,
+      "characteristics": [],
+      "created_at": 1487024409614,
+      "updated_at": 1487024409614,
+      "published_at": 1487024462764,
+      "paths": {
+        "/": []
+      }
+    }
+  ]
+}
